@@ -203,7 +203,6 @@ public class Main {
         }
         System.out.println("Press Enter and pass the move to another player");
         scanner.nextLine();
-        scanner.close();
         System.out.println("\n");
 
         return field;
