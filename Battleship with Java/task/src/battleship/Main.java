@@ -24,7 +24,7 @@ public class Main {
         clearScreen();
 
         setPlayerNum();
-        System.out.println("Player "+ playerNum + ", place your ships to the game field\n");
+        System.out.println("Player " + playerNum + ", place your ships to the game field\n");
         picking(field2);
         System.out.println("Press Enter and pass the move to another player");
         scanner.nextLine();
@@ -33,23 +33,22 @@ public class Main {
         System.out.println("The game starts\n");
 
         // ------ guessing -------
-        while (true){
-            if (guessing(field2, fogField2, field1) == false){
+        while (true) {
+            if (guessing(field2, fogField2, field1) == false) {
                 break;
             }
-            if (guessing(field1, fogField1, field2) == false){
+            if (guessing(field1, fogField1, field2) == false) {
                 break;
             }
         }
-
     }
-    public static boolean guessing(String[][] field, String[][] fogField, String[][] yourField){
+
+    public static boolean guessing(String[][] field, String[][] fogField, String[][] yourField) {
         Scanner scanner = new Scanner(System.in);
         player = !player;
         setPlayerNum();
-        while (true){
+        while (true) {
             try {
-
                 printField(fogField);
                 System.out.println("---------------------");
                 printField(yourField);
@@ -58,12 +57,12 @@ public class Main {
                 String shot = scanner.next();
                 System.out.println();
                 shoot(field, fogField, shot, yourField);
-                if (lastShip(field)){
+                if (lastShip(field)) {
                     return false;
                 }
                 System.out.println();
                 break;
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Error! You entered the wrong coordinates! Try again:\n");
                 String shot = scanner.next();
                 System.out.println();
@@ -72,10 +71,9 @@ public class Main {
         }
         return true;
 
-        }
+    }
 
-
-    public static String[][] picking(String[][] field){
+    public static String[][] picking(String[][] field) {
         Scanner scanner = new Scanner(System.in);
         String[] shipNoCells = new String[]{"Aircraft Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"};
         String[] ship = new String[]{"Aircraft Carrier (5 cells)", "Battleship (4 cells)", "Submarine (3 cells)", "Cruiser (3 cells)", "Destroyer (2 cells)"};
@@ -84,10 +82,9 @@ public class Main {
         int count = 0;
         int k = 0;
         boolean error = false;
-        while(true){
-
+        while (true) {
             try {
-                if (!error){
+                if (!error) {
                     System.out.printf("Enter the coordinates of the %s:\n", ship[count]);
                     System.out.println();
                 } else {
@@ -99,57 +96,75 @@ public class Main {
                 k++;
                 printField(field);
                 System.out.println();
-            } catch (IllegalPathStateException e){
+            } catch (IllegalPathStateException e) {
                 System.out.println("Error! Wrong ship location! Try again:");
                 System.out.println();
                 error = true;
-            } catch (IllegalAccessError e){
+            } catch (IllegalAccessError e) {
                 error = true;
                 System.out.println("Error! You placed it too close to another one. Try again:");
                 System.out.println();
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println();
                 System.out.printf("Error! Wrong length of the %s! Try again:\n", shipNoCells[count]);
                 System.out.println();
                 error = true;
             }
-            if (count == 5){
+            if (count == 5) {
                 break;
             }
         }
         return field;
     }
+
     public static boolean hitLastPart(String[][] field, String[][] fogField, int row, int column){
         boolean hitShip = false;
-        boolean hitShipR = false;
-        boolean hitShipC = false;
+        boolean hitShipRU = false;
+        boolean hitShipRD = false;
+        boolean hitShipCL = false;
+        boolean hitShipCR = false;
         if (isWithinBounds(field, row + 1, column)){
-            if (field[row + 1][column].equals("~") && (field[row][column].equals("o") || field[row][column].equals("X"))){
-                hitShipR = true;
+            if (field[row + 1][column].equals("X") || field[row + 1][column].equals("~")){
+                hitShipRU = true;
             }
-        } else {
-            hitShipR = true;
+        } else{
+            hitShipRU = true;
+        }
+        if (isWithinBounds(field, row - 1, column)){
+            if (field[row - 1][column].equals("X") || field[row - 1][column].equals("~")){
+                hitShipRD = true;
+            }
+        } else{
+            hitShipRD = true;
         }
         if (isWithinBounds(field, row, column + 1)){
-            if (field[row][column + 1].equals("~") && (field[row][column].equals("o") || field[row][column].equals("X"))){
-                hitShipC = true;
+            if (field[row][column + 1].equals("X") || field[row][column + 1].equals("~")){
+                hitShipCR = true;
             }
-        } else {
-            hitShipC = true;
+        } else{
+            hitShipCR = true;
         }
-        if (hitShipR && hitShipC){
+        if (isWithinBounds(field, row, column - 1)){
+            if (field[row][column - 1].equals("X") || field[row][column - 1].equals("~")){
+                hitShipCL = true;
+            }
+        }  else{
+            hitShipCL = true;
+        }
+
+        if (hitShipRU && hitShipRD && hitShipCL && hitShipCR){
             hitShip = true;
         }
         return hitShip;
     }
-    public static boolean lastShip(String[][] field){
+
+    public static boolean lastShip(String[][] field) {
         boolean isTrue = true;
-        boolean stop = false;;
-        for (int i = 0; i < field.length && !stop; i++){
-            for (int j = 0; j < field[i].length; j++){
-                if (field[i][j].equals("o")){
-                    System.out.println(i + 1);
-                    System.out.println(j + 1);
+        boolean stop = false;
+        ;
+        for (int i = 0; i < field.length && !stop; i++) {
+            for (int j = 0; j < field[i].length; j++) {
+                if (field[i][j].equals("o")) {
                     isTrue = false;
                     stop = true;
                 }
@@ -157,44 +172,44 @@ public class Main {
         }
         return isTrue;
     }
-    public static String[][] fog(String[][] fogField, String[][] field){
-        for (int i = 0; i < fogField.length; i++){
-            for (int j = 0; j < fogField[i].length; j++){
-                if (field[i][j].equals("X")){
+
+    public static String[][] fog(String[][] fogField, String[][] field) {
+        for (int i = 0; i < fogField.length; i++) {
+            for (int j = 0; j < fogField[i].length; j++) {
+                if (field[i][j].equals("X")) {
                     fogField[i][j] = "X";
                 }
-                if (field[i][j].equals("M")){
+                if (field[i][j].equals("M")) {
                     fogField[i][j] = "M";
                 }
             }
         }
         return fogField;
     }
-    public static String[][] shoot(String[][] field, String[][] fogField, String shot, String[][] yourField){
+
+    public static String[][] shoot(String[][] field, String[][] fogField, String shot, String[][] yourField) {
         Scanner scanner = new Scanner(System.in);
         int[] shotCoordinates = inputToArray(shot);
         int row = shotCoordinates[0];
         int column = shotCoordinates[1];
         // ---- controlling -----
-        if (row > 10 || column > 10){
+        if (row > 10 || column > 10) {
             throw new IllegalArgumentException();
         }
         // ----- setting -----
 
-        if (hitLastPart(field, fogField, row, column)){
+        if (hitLastPart(field, fogField, row, column)) {
             field[row][column] = "X";
             fog(fogField, field);
-            if (lastShip(field)){
+            if (lastShip(field)) {
                 System.out.println("You sank the last ship. You won. Congratulations!");
                 return field;
-            } else{
+            } else {
                 System.out.println("You sank a ship!");
             }
-        } else if (field[row][column].equals("o") || field[row][column].equals("X")){
+        } else if (field[row][column].equals("o") || field[row][column].equals("X")) {
             field[row][column] = "X";
             fog(fogField, field);
-            printField(fogField);
-
             System.out.println("You hit a ship!");
         } else {
             field[row][column] = "M";
@@ -209,24 +224,25 @@ public class Main {
         return field;
     }
 
-    public static int[] inputToArray(String coordinates){
+
+    public static int[] inputToArray(String coordinates) {
         String aToJ = "ABCDEFGHIJ";
         StringBuilder coordinatesFormat = new StringBuilder();
 
         // ------- converting string input to array -------
         coordinatesFormat.append(coordinates);
-        if (coordinates.charAt(0) == ' '){
+        if (coordinates.charAt(0) == ' ') {
             coordinatesFormat.deleteCharAt(0);
         }
 
-        for (int i = 0; i < coordinates.length(); i++){
+        for (int i = 0; i < coordinates.length(); i++) {
             if (Character.isLetter(coordinatesFormat.charAt(i))) {
                 coordinatesFormat.insert(i + 1, " ");
 
             }
         }
 
-        for (int i = 0; i < coordinatesFormat.length(); i++){
+        for (int i = 0; i < coordinatesFormat.length(); i++) {
 
             for (int j = 0; j < aToJ.length(); j++) {
                 if (coordinatesFormat.charAt(i) == aToJ.charAt(j)) {
@@ -241,7 +257,7 @@ public class Main {
         int[] coordinatesInt = new int[coordinatesArr.length];
         int[] noSwapCoordinatesInt = new int[coordinatesArr.length];
 
-        for (int i = 0; i < coordinatesInt.length; i++){
+        for (int i = 0; i < coordinatesInt.length; i++) {
             coordinatesInt[i] = Integer.parseInt(coordinatesArr[i]) - 1;
             noSwapCoordinatesInt[i] = Integer.parseInt(coordinatesArr[i]) - 1;
         }
@@ -249,16 +265,16 @@ public class Main {
 
     }
 
-    public static String[][] reserve(String coordinates, String[][] field, int k){
+    public static String[][] reserve(String coordinates, String[][] field, int k) {
         // ------ swapping integers -------
         int[] coordinatesInt = inputToArray(coordinates);
 
-        if (coordinatesInt[0] > coordinatesInt[2]){
+        if (coordinatesInt[0] > coordinatesInt[2]) {
             int temp = coordinatesInt[0];
             coordinatesInt[0] = coordinatesInt[2];
             coordinatesInt[2] = temp;
         }
-        if (coordinatesInt[1] > coordinatesInt[3]){
+        if (coordinatesInt[1] > coordinatesInt[3]) {
             int temp = coordinatesInt[1];
             coordinatesInt[1] = coordinatesInt[3];
             coordinatesInt[3] = temp;
@@ -271,36 +287,38 @@ public class Main {
         // ------ calculating length ------
         int upLength = secondRow - firstRow;
         int sideLength = secondColumn - firstColumn;
-        if (upLength > 0 && sideLength > 0){
+        if (upLength > 0 && sideLength > 0) {
             throw new IllegalArgumentException();
         }
         int length;
-        if (Math.abs(upLength) > Math.abs(sideLength)){
+        if (Math.abs(upLength) > Math.abs(sideLength)) {
             length = Math.abs(upLength) + 1;
         } else {
             length = Math.abs(sideLength) + 1;
         }
         int shouldLength = 5 - k;
-        if (k >= 3){
+
+        if ((shouldLength == 2 && length == 3) || (shouldLength == 1 && length == 2)) {
             shouldLength++;
         }
-        if (Math.abs(upLength) > 10 || Math.abs(sideLength) > 10 || shouldLength != length){
+
+        if (shouldLength != length) {
             throw new IllegalArgumentException();
         }
 
 // ------- controlling -------
-        if (upLength > 0 || sideLength > 0){
+        if (upLength > 0 || sideLength > 0) {
             for (int i = 0; i < length; i++) {
 
-                if (upLength < sideLength){
-                    if (isWithinBounds(field, firstRow, firstColumn + i - 1)){
-                        if (field[firstRow][firstColumn + i - 1].equals("o")){
+                if (upLength < sideLength) {
+                    if (isWithinBounds(field, firstRow, firstColumn + i - 1)) {
+                        if (field[firstRow][firstColumn + i - 1].equals("o")) {
 
                             throw new IllegalAccessError();
                         }
                     }
-                    if (isWithinBounds(field, firstRow, firstColumn + i + 1)){
-                        if (field[firstRow][firstColumn + i + 1].equals("o")){
+                    if (isWithinBounds(field, firstRow, firstColumn + i + 1)) {
+                        if (field[firstRow][firstColumn + i + 1].equals("o")) {
 
                             throw new IllegalAccessError();
                         }
@@ -308,8 +326,7 @@ public class Main {
 
                     if (isWithinBounds(field, firstRow + 1, firstColumn + i)) {
                         if (field[firstRow + 1][firstColumn + i].equals("o")) {
-                            System.out.println(firstRow);
-                            System.out.println(firstRow + i);
+
 
                             throw new IllegalAccessError();
                         }
@@ -349,7 +366,7 @@ public class Main {
                         }
                     }
                 }
-                }
+            }
         } else {
             throw new IllegalArgumentException();
         }
@@ -364,40 +381,44 @@ public class Main {
         System.out.println();
         return field;
     }
+
     private static boolean isWithinBounds(String[][] field, int row, int col) {
         return row >= 0 && row < field.length && col >= 0 && col < field[row].length;
     }
 
-    public static void printField(String[][] field){
+    public static void printField(String[][] field) {
         System.out.println("  1 2 3 4 5 6 7 8 9 10");
         String aToJ = "ABCDEFGHIJ";
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 10; i++) {
             System.out.print(aToJ.charAt(i));
-            for (int j = 0; j < 10; j++){
+            for (int j = 0; j < 10; j++) {
                 System.out.print(" " + field[i][j]);
             }
             System.out.println();
         }
 
     }
-    public static String[][] createField(){
+
+    public static String[][] createField() {
         String[][] field = new String[10][10];
-        for (int i = 0; i < 10; i++){
-            for (int j = 0; j < 10; j++){
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
                 field[i][j] = "~";
             }
         }
         return field;
     }
-    public static void setPlayerNum(){
-        if (player){
+
+    public static void setPlayerNum() {
+        if (player) {
             playerNum = 2;
         } else {
             playerNum = 1;
         }
     }
+
     public static void clearScreen() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println();
         }
     }
