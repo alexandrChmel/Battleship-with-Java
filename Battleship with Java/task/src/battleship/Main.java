@@ -8,7 +8,6 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int[] shipCount = new int[]{5, 4, 3, 3, 2};
 
         String[][] field1 = createField();
         String[][] fogField1 = createField();
@@ -56,7 +55,7 @@ public class Main {
                 System.out.println("Player " + playerNum + ", it's your turn:\n");
                 String shot = scanner.next();
                 System.out.println();
-                shoot(field, fogField, shot, yourField);
+                shoot(field, fogField, shot);
                 if (lastShip(field)) {
                     return false;
                 }
@@ -66,23 +65,22 @@ public class Main {
                 System.out.println("Error! You entered the wrong coordinates! Try again:\n");
                 String shot = scanner.next();
                 System.out.println();
-                shoot(field, fogField, shot, yourField);
+                shoot(field, fogField, shot);
             }
         }
         return true;
 
     }
 
-    public static String[][] picking(String[][] field) {
+    public static void picking(String[][] field) {
         Scanner scanner = new Scanner(System.in);
         String[] shipNoCells = new String[]{"Aircraft Carrier", "Battleship", "Submarine", "Cruiser", "Destroyer"};
         String[] ship = new String[]{"Aircraft Carrier (5 cells)", "Battleship (4 cells)", "Submarine (3 cells)", "Cruiser (3 cells)", "Destroyer (2 cells)"};
         printField(field);
         System.out.println();
         int count = 0;
-        int k = 0;
         boolean error = false;
-        while (true) {
+        do {
             try {
                 if (!error) {
                     System.out.printf("Enter the coordinates of the %s:\n", ship[count]);
@@ -93,7 +91,6 @@ public class Main {
                 String coordinates = scanner.nextLine();
                 reserve(coordinates, field, count);
                 count++;
-                k++;
                 printField(field);
                 System.out.println();
             } catch (IllegalPathStateException e) {
@@ -110,14 +107,10 @@ public class Main {
                 System.out.println();
                 error = true;
             }
-            if (count == 5) {
-                break;
-            }
-        }
-        return field;
+        } while (count != 5);
     }
 
-    public static boolean hitLastPart(String[][] field, String[][] fogField, int row, int column){
+    public static boolean hitLastPart(String[][] field, int row, int column){
         boolean hitShip = false;
         boolean hitShipRU = false;
         boolean hitShipRD = false;
@@ -159,21 +152,17 @@ public class Main {
     }
 
     public static boolean lastShip(String[][] field) {
-        boolean isTrue = true;
-        boolean stop = false;
-        ;
-        for (int i = 0; i < field.length && !stop; i++) {
+        for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
                 if (field[i][j].equals("o")) {
-                    isTrue = false;
-                    stop = true;
+                    return false;
                 }
             }
         }
-        return isTrue;
+        return true;
     }
 
-    public static String[][] fog(String[][] fogField, String[][] field) {
+    public static void fog(String[][] fogField, String[][] field) {
         for (int i = 0; i < fogField.length; i++) {
             for (int j = 0; j < fogField[i].length; j++) {
                 if (field[i][j].equals("X")) {
@@ -184,10 +173,9 @@ public class Main {
                 }
             }
         }
-        return fogField;
     }
 
-    public static String[][] shoot(String[][] field, String[][] fogField, String shot, String[][] yourField) {
+    public static void shoot(String[][] field, String[][] fogField, String shot) {
         Scanner scanner = new Scanner(System.in);
         int[] shotCoordinates = inputToArray(shot);
         int row = shotCoordinates[0];
@@ -198,12 +186,12 @@ public class Main {
         }
         // ----- setting -----
 
-        if (hitLastPart(field, fogField, row, column)) {
+        if (hitLastPart(field, row, column)) {
             field[row][column] = "X";
             fog(fogField, field);
             if (lastShip(field)) {
                 System.out.println("You sank the last ship. You won. Congratulations!");
-                return field;
+                return;
             } else {
                 System.out.println("You sank a ship!");
             }
@@ -219,8 +207,6 @@ public class Main {
         System.out.println("Press Enter and pass the move to another player");
         scanner.nextLine();
         System.out.println("\n");
-
-        return field;
     }
 
 
@@ -254,17 +240,15 @@ public class Main {
         // ------ int array from String ------
         String[] coordinatesArr = coordinatesFormat.toString().split(" ");
         int[] coordinatesInt = new int[coordinatesArr.length];
-        int[] noSwapCoordinatesInt = new int[coordinatesArr.length];
 
         for (int i = 0; i < coordinatesInt.length; i++) {
             coordinatesInt[i] = Integer.parseInt(coordinatesArr[i]) - 1;
-            noSwapCoordinatesInt[i] = Integer.parseInt(coordinatesArr[i]) - 1;
         }
         return coordinatesInt;
 
     }
 
-    public static String[][] reserve(String coordinates, String[][] field, int k) {
+    public static void reserve(String coordinates, String[][] field, int k) {
         // ------ swapping integers -------
         int[] coordinatesInt = inputToArray(coordinates);
 
@@ -378,7 +362,6 @@ public class Main {
             }
         }
         System.out.println();
-        return field;
     }
 
     private static boolean isWithinBounds(String[][] field, int row, int col) {
@@ -417,7 +400,7 @@ public class Main {
     }
 
     public static void clearScreen() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             System.out.println();
         }
     }
